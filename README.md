@@ -1,10 +1,10 @@
 # Huerto Loco
 
-## Overview
-"Huerto Loco" is a Java application that follows the Model-View-Controller (MVC) architecture. The application is designed to manage and interact with data related to a gardening project, providing a user-friendly interface for users to input and retrieve information.
+## Descripción general
+"Huerto Loco" es una aplicación Java que sigue la arquitectura Modelo-Vista-Controlador (MVC). La aplicación está diseñada para gestionar e interactuar con datos relacionados con un proyecto de jardinería, proporcionando una interfaz amigable para que los usuarios ingresen y consulten información.
 
-## Project Structure
-The project is organized into the following directories and files:
+## Estructura del proyecto
+El proyecto está organizado en los siguientes directorios y archivos:
 
 ```
 HuertoLoco
@@ -15,42 +15,51 @@ HuertoLoco
 │   │   └── MainModel.java
 │   ├── view
 │   │   └── MainView.java
-│   └── App.java
+│   └── main
+│       └── Main.java
 ├── .gitignore
 ├── pom.xml
 └── README.md
 ```
 
-## Setup Instructions
-1. **Clone the repository**:
+## Instrucciones de configuración
+1. **Clona el repositorio**:
    ```
-   git clone <repository-url>
+   git clone <url-del-repositorio>
    ```
 
-2. **Navigate to the project directory**:
+2. **Navega al directorio del proyecto**:
    ```
    cd HuertoLoco
    ```
 
-3. **Build the project**:
-   Use Maven to build the project:
+3. **Compila el proyecto**:
+   Si usas Maven:
    ```
    mvn clean install
    ```
-
-4. **Run the application**:
-   Execute the main application:
+   O si prefieres compilar manualmente:
    ```
-   mvn exec:java -Dexec.mainClass="App"
+   javac -d bin -cp src src/main/Main.java src/model/MainModel.java src/view/MainView.java src/controller/MainController.java
    ```
 
-## Features
-- User-friendly interface for managing gardening data.
-- MVC architecture for clear separation of concerns.
-- Easy to extend and maintain.
+4. **Ejecuta la aplicación**:
+   Con Maven:
+   ```
+   mvn exec:java -Dexec.mainClass="main.Main"
+   ```
+   O manualmente:
+   ```
+   java -cp bin main.Main
+   ```
 
-## Contributing
-Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
+## Características
+- Interfaz amigable para gestionar datos de jardinería.
+- Arquitectura MVC para una clara separación de responsabilidades.
+- Fácil de extender y mantener.
 
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+## Contribuciones
+¡Las contribuciones son bienvenidas! Por favor, abre un issue o envía un pull request para cualquier mejora o corrección de errores.
+
+## Licencia
+Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.

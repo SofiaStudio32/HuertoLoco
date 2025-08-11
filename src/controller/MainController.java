@@ -14,7 +14,7 @@ public class MainController {
         this.model = model;
         this.view = view;
 
-        this.view.addActionListener(new ActionListener() {
+        this.view.addSubmitListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleUserInput();
@@ -23,8 +23,9 @@ public class MainController {
     }
 
     private void handleUserInput() {
-        String input = view.getUserInput();
-        model.processInput(input);
-        view.updateDisplay(model.getData());
+        String input = view.getInput();
+        // Aquí podrías procesar el input con el modelo, por ejemplo:
+        model.setPlantDetails(input, 1); // ejemplo simple
+        view.setOutput("Planta registrada: " + model.getPlantName());
     }
 }

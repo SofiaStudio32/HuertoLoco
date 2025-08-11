@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compilar Java",
+            "type": "shell",
+            "command": "javac -d bin -cp src src/main/main.java src/model/MainModel.java src/view/MainView.java src/controller/MainController.java",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$javac"]
+        },
+        {
+            "label": "Ejecutar Main",
+            "type": "shell",
+            "command": "java -cp bin main.Main",
+            "dependsOn": "Compilar Java",
+            "group": "test"
+        }
+    ]
+}

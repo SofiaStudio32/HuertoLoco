@@ -1,16 +1,14 @@
 package main;
 
-import model.MainModel;
-import view.MainView;
-import controller.MainController;
+import controller.GameController;
+import model.FarmersModel;
+import model.QuestionsModel;
 
 public class Main {
     public static void main(String[] args) {
-        // Crear instancias del modelo y la vista
-        MainModel model = new MainModel();
-        MainView view = new MainView();
+        FarmersModel farmersModel = new FarmersModel();
+        QuestionsModel questionsModel = new QuestionsModel();
 
-        // Crear el controlador y conectar modelo y vista
-        MainController controller = new MainController(model, view);
+        new GameController(farmersModel.getFarmers(), questionsModel.getQuestions());
     }
 }

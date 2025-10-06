@@ -17,6 +17,7 @@ public class QuestionsModel {
             new Question("Si tienes 5 gallinas y cada una pone 2 huevos, ¿cuántos huevos tienes?", new String[]{"5", "7", "10", "12"}, 2)
         };
     }
+    //preguntas modelos
 
     public Question[] getQuestions() {
         return questions;

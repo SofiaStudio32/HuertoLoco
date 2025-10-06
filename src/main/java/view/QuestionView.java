@@ -6,23 +6,48 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Vista para mostrar preguntas, opciones de respuesta y poderes/comodines disponibles.
+ * Incluye fondo animado tipo granja y feedback visual.
+ */
 public class QuestionView {
+    // --- Ventana principal ---
     private JFrame frame;
+    // --- Emoji/avatar superior ---
     private JLabel emojiLabel;
+    // --- Pregunta actual ---
     private JLabel questionLabel;
+    // --- Opciones de respuesta ---
     private JRadioButton[] optionButtons;
     private ButtonGroup group;
+    // --- Botón para enviar respuesta ---
     private JButton submitButton;
+    // --- Feedback visual ---
     private JLabel feedbackLabel;
+    // --- Temporizador ---
     private JLabel timerLabel;
+    // --- Panel principal de pregunta ---
     private JPanel mainPanel;
+    // --- Panel y botones de poderes/comodines ---
+    private JButton[] powerButtons;
+    private JLabel[] powerLabels;
+    private JPanel powersPanel;
 
+    /**
+     * Constructor. Inicializa la ventana y todos los componentes visuales.
+     * @param numOptions Número de opciones de respuesta.
+     */
     public QuestionView(int numOptions) {
         frame = new JFrame("Pregunta");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(new FarmBackgroundPanel());
         frame.setLayout(new GridBagLayout());
 
+        // Panel de poderes (comodines) - estará arriba
+        powersPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        powersPanel.setOpaque(false);
+
+        // Panel principal de preguntas
         mainPanel = new JPanel();
         mainPanel.setOpaque(false);
         mainPanel.setLayout(new BorderLayout());
@@ -31,7 +56,7 @@ public class QuestionView {
                 BorderFactory.createEmptyBorder(20, 30, 20, 30)
         ));
 
-        // Emoji y pregunta
+        // --- Emoji y pregunta ---
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setOpaque(false);
         emojiLabel = new JLabel("🌾🐔", SwingConstants.CENTER);
@@ -44,7 +69,7 @@ public class QuestionView {
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Opciones
+        // --- Opciones de respuesta ---
         JPanel optionsPanel = new JPanel(new GridLayout(numOptions, 1, 10, 10));
         optionsPanel.setOpaque(false);
         optionButtons = new JRadioButton[numOptions];
@@ -55,7 +80,7 @@ public class QuestionView {
             optionButtons[i].setOpaque(false);
             optionButtons[i].setFocusPainted(false);
             optionButtons[i].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            // Efecto hover
+            // Efecto hover visual
             final int idx = i;
             optionButtons[i].addMouseListener(new MouseAdapter() {
                 @Override
@@ -75,7 +100,7 @@ public class QuestionView {
         }
         mainPanel.add(optionsPanel, BorderLayout.CENTER);
 
-        // Zona inferior
+        // --- Zona inferior: botón, feedback y temporizador ---
         JPanel southPanel = new JPanel(new BorderLayout());
         southPanel.setOpaque(false);
         submitButton = new JButton("Responder");
@@ -97,18 +122,28 @@ public class QuestionView {
 
         mainPanel.add(southPanel, BorderLayout.SOUTH);
 
-        // Centrar mainPanel
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 0;
-        gbc.weightx = 1; gbc.weighty = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        frame.add(mainPanel, gbc);
+        // --- Layout general: pregunta centrada, poderes arriba ---
+        GridBagConstraints gbcMain = new GridBagConstraints();
+        gbcMain.gridx = 0; gbcMain.gridy = 1;
+        gbcMain.weightx = 1; gbcMain.weighty = 1;
+        gbcMain.fill = GridBagConstraints.NONE;
+        frame.add(mainPanel, gbcMain);
 
-        frame.setSize(600, 400);
+        GridBagConstraints gbcPowers = new GridBagConstraints();
+        gbcPowers.gridx = 0; gbcPowers.gridy = 0;
+        gbcPowers.weightx = 1;
+        gbcPowers.insets = new Insets(10, 0, 0, 0);
+        gbcPowers.anchor = GridBagConstraints.NORTH;
+        frame.add(powersPanel, gbcPowers);
+
+        frame.setSize(800, 500);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
+    /**
+     * Establece la pregunta y las opciones de respuesta.
+     */
     public void setQuestion(String question, String[] options) {
         questionLabel.setText("<html><center>" + question + "</center></html>");
         for (int i = 0; i < options.length; i++) {
@@ -120,6 +155,9 @@ public class QuestionView {
         feedbackLabel.setText(" ");
     }
 
+    /**
+     * Devuelve el índice de la opción seleccionada, o -1 si ninguna.
+     */
     public int getSelectedOption() {
         for (int i = 0; i < optionButtons.length; i++) {
             if (optionButtons[i].isSelected()) return i;
@@ -127,10 +165,16 @@ public class QuestionView {
         return -1;
     }
 
+    /**
+     * Asocia un listener al botón de enviar respuesta.
+     */
     public void addSubmitListener(ActionListener listener) {
         submitButton.addActionListener(listener);
     }
 
+    /**
+     * Muestra feedback visual según si la respuesta fue correcta o incorrecta.
+     */
     public void setFeedback(String feedback, boolean correct, int correctIndex, int selectedIndex) {
         if (correct) {
             optionButtons[correctIndex].setForeground(new Color(34, 139, 34));
@@ -150,14 +194,23 @@ public class QuestionView {
         }
     }
 
+    /**
+     * Actualiza el texto del temporizador.
+     */
     public void setTimerText(String text) {
         timerLabel.setText(text);
     }
 
+    /**
+     * Cierra la ventana de pregunta.
+     */
     public void close() {
         frame.dispose();
     }
 
+    /**
+     * Cambia el emoji/avatar según el estado de ánimo (feliz/triste).
+     */
     public void setAvatarMood(boolean happy) {
         if (happy) {
             emojiLabel.setText("😊🌾");
@@ -166,7 +219,56 @@ public class QuestionView {
         }
     }
 
-    // Panel de fondo tipo granja
+    /**
+     * Muestra los poderes/comodines disponibles arriba de la pregunta.
+     * @param powerNames Nombres de los poderes.
+     * @param powerCounts Cantidad disponible de cada poder.
+     * @param icons Iconos visuales (pueden ser emojis).
+     */
+    public void setPowers(String[] powerNames, int[] powerCounts, Icon[] icons) {
+        powersPanel.removeAll();
+        powerButtons = new JButton[powerNames.length];
+        powerLabels = new JLabel[powerNames.length];
+
+        for (int i = 0; i < powerNames.length; i++) {
+            powerButtons[i] = new JButton();
+            powerButtons[i].setIcon(icons[i]);
+            powerButtons[i].setToolTipText(powerNames[i]);
+            powerButtons[i].setEnabled(powerCounts[i] > 0);
+            powerButtons[i].setPreferredSize(new Dimension(48, 48));
+            powerButtons[i].setBackground(new Color(255, 236, 179));
+            powerButtons[i].setFocusPainted(false);
+
+            powerLabels[i] = new JLabel(powerNames[i] + ": " + powerCounts[i]);
+            powerLabels[i].setFont(new Font("Comic Sans MS", Font.PLAIN, 14));
+            powerLabels[i].setForeground(powerCounts[i] > 0 ? new Color(34, 139, 34) : Color.GRAY);
+
+            powersPanel.add(powerButtons[i]);
+            powersPanel.add(powerLabels[i]);
+        }
+        powersPanel.revalidate();
+        powersPanel.repaint();
+    }
+
+    /**
+     * Asocia un listener a cada botón de poder/comodín.
+     */
+    public void addPowerListener(int index, ActionListener listener) {
+        if (powerButtons != null && index < powerButtons.length) {
+            powerButtons[index].addActionListener(listener);
+        }
+    }
+
+    /**
+     * Utilidad para crear un icono a partir de un emoji.
+     */
+    private Icon emojiIcon(String emoji) {
+        return new JLabel(emoji).getIcon();
+    }
+
+    /**
+     * Panel de fondo tipo granja, dibujado con gráficos 2D.
+     */
     static class FarmBackgroundPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
@@ -207,5 +309,12 @@ public class QuestionView {
             int[] yPico = {getHeight()/2+45, getHeight()/2+50, getHeight()/2+55};
             g2.fillPolygon(xPico, yPico, 3);
         }
+    }
+
+    /**
+     * Muestra un mensaje emergente al usuario.
+     */
+    public void showMessage(String message) {
+        JOptionPane.showMessageDialog(frame, message);
     }
 }

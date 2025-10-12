@@ -10,8 +10,6 @@ import java.awt.event.ActionListener;
  * Permite al usuario elegir su granjero y acceder a la tienda de poderes.
  */
 public class FarmerSelectionView {
-    // --- Ventana principal ---
-    private JFrame frame;
     // --- Botones para cada granjero ---
     private JButton[] farmerButtons;
     // --- Botón para acceder a la tienda ---
@@ -22,13 +20,6 @@ public class FarmerSelectionView {
      * @param farmers Arreglo de granjeros disponibles.
      */
     public FarmerSelectionView(Farmer[] farmers) {
-        frame = new JFrame("Selecciona tu granjero");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(new QuestionView.FarmBackgroundPanel());
-        frame.setLayout(new GridBagLayout());
-        farmerButtons = new JButton[farmers.length];
-
-        // Panel principal con GridBagLayout para responsividad
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setOpaque(false);
 
@@ -56,6 +47,7 @@ public class FarmerSelectionView {
         mainPanel.add(shopButton, gbcShop);
 
         // --- Botones para cada granjero ---
+        farmerButtons = new JButton[farmers.length];
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = 2;
         gbc.insets = new Insets(20, 20, 20, 20);
@@ -108,18 +100,17 @@ public class FarmerSelectionView {
             mainPanel.add(farmerButtons[i], gbc);
         }
 
-        // --- Agrega el panel principal a la ventana ---
-        GridBagConstraints gbcPanel = new GridBagConstraints();
-        gbcPanel.gridx = 0;
-        gbcPanel.gridy = 0;
-        gbcPanel.weightx = 1.0;
-        gbcPanel.weighty = 1.0;
-        gbcPanel.fill = GridBagConstraints.BOTH;
-        frame.add(mainPanel, gbcPanel);
+        // --- Fondo tipo granja ---
+        JPanel backgroundPanel = new QuestionView.FarmBackgroundPanel();
+        backgroundPanel.setLayout(new BorderLayout());
+        backgroundPanel.add(mainPanel, BorderLayout.CENTER);
 
-        frame.setSize(900, 500);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        // --- Usa el JFrame principal de la app ---
+        AppFrame.frame.setContentPane(backgroundPanel);
+        AppFrame.frame.setSize(1200, 800); // Tamaño ventana grande
+        AppFrame.frame.setLocationRelativeTo(null);
+        AppFrame.frame.revalidate();
+        AppFrame.frame.repaint();
     }
 
     /**
@@ -140,9 +131,9 @@ public class FarmerSelectionView {
     }
 
     /**
-     * Cierra la ventana de selección de granjero.
+     * Cierra la vista (no hace nada, solo para compatibilidad).
      */
     public void close() {
-        frame.dispose();
+        // No cerrar el JFrame, solo cambiar la vista desde el controlador
     }
 }

@@ -9,8 +9,6 @@ import java.awt.event.ActionListener;
  * Permite al usuario ver sus puntos, comprar poderes y visualizar cuántos tiene de cada tipo.
  */
 public class ShopView {
-    // --- Ventana principal ---
-    private JFrame frame;
     // --- Label para mostrar puntos disponibles ---
     private JLabel pointsLabel;
     // --- Botones para comprar cada poder ---
@@ -28,10 +26,8 @@ public class ShopView {
      * @param currentPoints Puntos disponibles del usuario.
      */
     public ShopView(String[] powers, int[] costs, int[] powerCounts, int currentPoints) {
-        frame = new JFrame("Tienda de Poderes");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-        frame.setContentPane(new QuestionView.FarmBackgroundPanel());
+        JPanel backgroundPanel = new QuestionView.FarmBackgroundPanel();
+        backgroundPanel.setLayout(new BorderLayout());
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setOpaque(false);
@@ -75,10 +71,14 @@ public class ShopView {
         gbc.gridx = 0; gbc.gridy = powers.length + 2; gbc.gridwidth = 2;
         mainPanel.add(closeButton, gbc);
 
-        frame.add(mainPanel, BorderLayout.CENTER);
-        frame.setSize(500, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        backgroundPanel.add(mainPanel, BorderLayout.CENTER);
+
+        // --- Usa el JFrame principal de la app ---
+        AppFrame.frame.setContentPane(backgroundPanel);
+        AppFrame.frame.setSize(1200, 800); // Tamaño ventana grande
+        AppFrame.frame.setLocationRelativeTo(null);
+        AppFrame.frame.revalidate();
+        AppFrame.frame.repaint();
     }
 
     /**
@@ -111,14 +111,14 @@ public class ShopView {
      * @param message Mensaje a mostrar.
      */
     public void showMessage(String message) {
-        JOptionPane.showMessageDialog(frame, message);
+        JOptionPane.showMessageDialog(AppFrame.frame, message);
     }
 
     /**
-     * Cierra la ventana de la tienda.
+     * Cierra la vista (no hace nada, solo para compatibilidad).
      */
     public void close() {
-        frame.dispose();
+        // No cerrar el JFrame, solo cambiar la vista desde el controlador
     }
 
     /**

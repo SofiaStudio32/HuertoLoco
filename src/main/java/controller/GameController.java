@@ -3,6 +3,7 @@ package controller;
 import model.Farmer;
 import model.Pointsmodel;
 import model.Question;
+import model.SpecialPowerType;
 import view.FarmerSelectionView;
 import view.QuestionView;
 import view.ResultView;
@@ -36,6 +37,9 @@ public class GameController {
     private Timer timer;
     private int timeLeft;
 
+    // Agrega este campo en la clase GameController:
+    private boolean extraHintUsed = false;
+
     /**
      * Constructor principal. Inicializa el juego y muestra la selección de personaje.
      */
@@ -51,7 +55,7 @@ public class GameController {
     /**
      * Muestra la ventana de selección de personaje y conecta el botón de tienda.
      */
-    private void showFarmerSelection() {
+    public void showFarmerSelection() {
         farmerSelectionView = new FarmerSelectionView(farmers);
         for (int i = 0; i < farmers.length; i++) {
             int idx = i;
@@ -62,7 +66,7 @@ public class GameController {
             });
         }
         // Botón para abrir la tienda de poderes
-        farmerSelectionView.addShopListener(e -> new ShopController(pointsModel));
+        farmerSelectionView.addShopListener(e -> new ShopController(pointsModel, farmers, this));
     }
 
     /**
@@ -71,6 +75,7 @@ public class GameController {
     private void startGame() {
         score = 0;
         currentQuestion = 0;
+        extraHintUsed = false;
         showNextQuestion();
     }
 
@@ -86,10 +91,17 @@ public class GameController {
         Question q = questions[currentQuestion];
         questionView = new QuestionView(q.getOptions().length);
         questionView.setQuestion(q.getQuestion(), q.getOptions());
-        timeLeft = 12;
+
+        // --- Poder especial: tiempo ajustado ---
+        int baseTime = 12;
+        if (selectedFarmer.getSpecialPowerType() == SpecialPowerType.LESS_TIME) {
+            timeLeft = baseTime - selectedFarmer.getSpecialPowerValue();
+        } else {
+            timeLeft = baseTime;
+        }
         questionView.setTimerText("Tiempo: " + timeLeft);
 
-        // --- Configuración de poderes ---
+        // --- Configuración de poderes de la tienda ---
         String[] powerNames = {"Tiempo extra", "Pista", "Doble puntaje", "Salto de pregunta"};
         int[] powerCounts = {
             pointsModel.getPower("tiempo_extra"),
@@ -104,6 +116,25 @@ public class GameController {
             emojiIcon("➡️")
         };
         questionView.setPowers(powerNames, powerCounts, icons);
+
+        // --- Mostrar botón de poder especial solo si el granjero lo tiene ---
+        if (selectedFarmer.getSpecialPowerType() == SpecialPowerType.EXTRA_HINT) {
+            // Solo se puede usar una vez por partida
+            if (!extraHintUsed) {
+                questionView.setSpecialPowerButton(
+                    "Pista Especial",
+                    emojiIcon("🧠"),
+                    e -> {
+                        int correct = questions[currentQuestion].getCorrectIndex();
+                        questionView.showMessage("Pista especial: La respuesta correcta es \"" + questions[currentQuestion].getOptions()[correct] + "\"");
+                        extraHintUsed = true; //activa condicional para no volverse a usar
+                    }
+                );
+            }
+            else {
+                questionView.setSpecialPowerButton("Pista Especial (usada)", emojiIcon("🧠"), null);
+            }
+        }
 
         // Estados para poderes que afectan solo la pregunta actual
         final boolean[] doblePuntajeActivo = {false};
@@ -162,7 +193,7 @@ public class GameController {
                 questionView.setTimerText("Tiempo: " + timeLeft);
                 if (timeLeft <= 0) {
                     timer.stop();
-                    handleAnswer(-1); // No respondió a tiempo
+                    handleAnswer(-1);
                 }
             }
         });
@@ -187,6 +218,13 @@ public class GameController {
             // Bonus: 1 punto por cada 3 segundos que le sobraron
             bonus = timeLeft / 3;
         }
+
+        // --- Poder especial: puntaje extra ---
+        int puntajePregunta = correct ? 2 + bonus : -1;
+        if (selectedFarmer.getSpecialPowerType() == SpecialPowerType.BONUS_SCORE && correct) {
+            puntajePregunta += selectedFarmer.getSpecialPowerValue();
+        }
+        score += puntajePregunta;
 
         // --- Lógica de puntaje y feedback visual ---
         if (selectedIndex == -1) {

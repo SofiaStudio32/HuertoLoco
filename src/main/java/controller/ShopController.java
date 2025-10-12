@@ -1,7 +1,9 @@
 package controller;
 
+import model.Farmer;
 import model.Pointsmodel;
 import view.ShopView;
+import view.FarmerSelectionView;
 
 /**
  * Controlador de la tienda de poderes.
@@ -15,13 +17,20 @@ public class ShopController {
     // --- Nombres y costos de los poderes ---
     private String[] powers;
     private int[] costs;
+    private Farmer[] farmers; // <-- Nuevo campo
+    private GameController gameController;
 
     /**
      * Constructor. Inicializa la tienda y conecta los botones de compra y cierre.
      * @param pointsModel Modelo que gestiona puntos y poderes del usuario.
+     * @param farmers Arreglo de granjeros disponibles.
+     * @param gameController Controlador del juego, para regresar a la selección de personaje.
      */
-    public ShopController(Pointsmodel pointsModel) {
+    public ShopController(Pointsmodel pointsModel, Farmer[] farmers, GameController gameController) {
         this.pointsModel = pointsModel;
+        this.farmers = farmers; // <-- Guarda el arreglo
+        this.gameController = gameController;
+
         powers = new String[] {
             "Tiempo extra", "Pista", "Doble puntaje", "Salto de pregunta"
         };
@@ -38,13 +47,15 @@ public class ShopController {
         // Inicializa la vista de la tienda
         shopView = new ShopView(powers, costs, powerCounts, pointsModel.getPoints());
 
-        // Conecta los botones de compra de cada poder
         for (int i = 0; i < powers.length; i++) {
             int idx = i;
             shopView.addPowerListener(i, e -> buyPower(idx));
         }
-        // Conecta el botón de cerrar tienda
-        shopView.addCloseListener(e -> shopView.close());
+        // Modifica aquí el listener del botón cerrar:
+        shopView.addCloseListener(e -> {
+            shopView.close(); // Solo para compatibilidad, no cierra el JFrame
+            gameController.showFarmerSelection();
+        });
     }
 
     /**

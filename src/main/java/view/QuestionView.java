@@ -11,8 +11,6 @@ import java.awt.event.MouseEvent;
  * Incluye fondo animado tipo granja y feedback visual.
  */
 public class QuestionView {
-    // --- Ventana principal ---
-    private JFrame frame;
     // --- Emoji/avatar superior ---
     private JLabel emojiLabel;
     // --- Pregunta actual ---
@@ -26,8 +24,6 @@ public class QuestionView {
     private JLabel feedbackLabel;
     // --- Temporizador ---
     private JLabel timerLabel;
-    // --- Panel principal de pregunta ---
-    private JPanel mainPanel;
     // --- Panel y botones de poderes/comodines ---
     private JButton[] powerButtons;
     private JLabel[] powerLabels;
@@ -38,17 +34,16 @@ public class QuestionView {
      * @param numOptions Número de opciones de respuesta.
      */
     public QuestionView(int numOptions) {
-        frame = new JFrame("Pregunta");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(new FarmBackgroundPanel());
-        frame.setLayout(new GridBagLayout());
+        // Fondo tipo granja
+        JPanel backgroundPanel = new FarmBackgroundPanel();
+        backgroundPanel.setLayout(new BorderLayout());
 
-        // Panel de poderes (comodines) - estará arriba
+        // Panel de poderes arriba
         powersPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
         powersPanel.setOpaque(false);
 
-        // Panel principal de preguntas
-        mainPanel = new JPanel();
+        // Panel principal de pregunta
+        JPanel mainPanel = new JPanel();
         mainPanel.setOpaque(false);
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -122,23 +117,14 @@ public class QuestionView {
 
         mainPanel.add(southPanel, BorderLayout.SOUTH);
 
-        // --- Layout general: pregunta centrada, poderes arriba ---
-        GridBagConstraints gbcMain = new GridBagConstraints();
-        gbcMain.gridx = 0; gbcMain.gridy = 1;
-        gbcMain.weightx = 1; gbcMain.weighty = 1;
-        gbcMain.fill = GridBagConstraints.NONE;
-        frame.add(mainPanel, gbcMain);
+        // Agrega el panel de pregunta al centro del fondo
+        backgroundPanel.add(powersPanel, BorderLayout.NORTH);
+        backgroundPanel.add(mainPanel, BorderLayout.CENTER);
 
-        GridBagConstraints gbcPowers = new GridBagConstraints();
-        gbcPowers.gridx = 0; gbcPowers.gridy = 0;
-        gbcPowers.weightx = 1;
-        gbcPowers.insets = new Insets(10, 0, 0, 0);
-        gbcPowers.anchor = GridBagConstraints.NORTH;
-        frame.add(powersPanel, gbcPowers);
-
-        frame.setSize(800, 500);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        // Usa el JFrame principal
+        AppFrame.frame.setContentPane(backgroundPanel);
+        AppFrame.frame.revalidate();
+        AppFrame.frame.repaint();
     }
 
     /**
@@ -205,7 +191,9 @@ public class QuestionView {
      * Cierra la ventana de pregunta.
      */
     public void close() {
-        frame.dispose();
+        // No cerrar el JFrame, solo cambiar la vista desde el controlador
+        // Este método queda vacío para compatibilidad
+        // AppFrame.frame.dispose(); // No hacer esto, o cambiar a otra vista
     }
 
     /**
@@ -257,6 +245,21 @@ public class QuestionView {
         if (powerButtons != null && index < powerButtons.length) {
             powerButtons[index].addActionListener(listener);
         }
+    }
+
+    /**
+     * Establece un botón de poder/comodín especial (por ejemplo, para un evento único).
+     */
+    public void setSpecialPowerButton(String label, Icon icon, ActionListener listener) {
+        JButton specialButton = new JButton(label);
+        specialButton.setIcon(icon);
+        specialButton.setFont(new Font("Comic Sans MS", Font.BOLD, 14));
+        specialButton.setBackground(new Color(255, 236, 179));
+        specialButton.setFocusPainted(false);
+        specialButton.addActionListener(listener);
+        powersPanel.add(specialButton); // Lo agrega junto a los poderes normales
+        powersPanel.revalidate();
+        powersPanel.repaint();
     }
 
     /**
@@ -315,6 +318,6 @@ public class QuestionView {
      * Muestra un mensaje emergente al usuario.
      */
     public void showMessage(String message) {
-        JOptionPane.showMessageDialog(frame, message);
+        JOptionPane.showMessageDialog(AppFrame.frame, message);
     }
 }

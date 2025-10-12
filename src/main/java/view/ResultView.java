@@ -5,16 +5,13 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class ResultView {
-    private JFrame frame;
     private JLabel emojiLabel;
     private JLabel scoreLabel;
     private JButton playAgainButton;
 
     public ResultView() {
-        frame = new JFrame("Resultado");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(new QuestionView.FarmBackgroundPanel());
-        frame.setLayout(new GridBagLayout());
+        JPanel backgroundPanel = new QuestionView.FarmBackgroundPanel();
+        backgroundPanel.setLayout(new GridBagLayout());
 
         JPanel mainPanel = new JPanel();
         mainPanel.setOpaque(false);
@@ -43,11 +40,14 @@ public class ResultView {
         gbc.gridx = 0; gbc.gridy = 0;
         gbc.weightx = 1; gbc.weighty = 1;
         gbc.fill = GridBagConstraints.NONE;
-        frame.add(mainPanel, gbc);
+        backgroundPanel.add(mainPanel, gbc);
 
-        frame.setSize(400, 300);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        // Usa el JFrame principal de la app
+        AppFrame.frame.setContentPane(backgroundPanel);
+        AppFrame.frame.setSize(1200, 800); // Tamaño ventana grande
+        AppFrame.frame.setLocationRelativeTo(null);
+        AppFrame.frame.revalidate();
+        AppFrame.frame.repaint();
     }
 
     public void setScore(int score) {
@@ -59,6 +59,6 @@ public class ResultView {
     }
 
     public void close() {
-        frame.dispose();
+        // No cerrar el JFrame, solo cambiar la vista desde el controlador
     }
 }

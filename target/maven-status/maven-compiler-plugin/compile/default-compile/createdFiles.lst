@@ -1,3 +1,5 @@
+model\Pointsmodel.class
+view\AppFrame.class
 controller\GameController$3.class
 view\QuestionView$1.class
 view\FarmerSelectionView$1.class
@@ -7,6 +9,7 @@ main\Main.class
 controller\MainController.class
 model\FarmersModel.class
 model\MainModel.class
+model\SpecialPowerType.class
 model\QuestionsModel.class
 view\ResultView.class
 controller\GameController$2.class
@@ -16,4 +19,6 @@ view\MainView.class
 controller\MainController$1.class
 controller\GameController$1.class
 view\FarmerSelectionView.class
+view\ShopView.class
+controller\ShopController.class
 view\QuestionView$FarmBackgroundPanel.class
